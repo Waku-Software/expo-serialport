@@ -23,8 +23,13 @@ export function getSerialNumberAsync(deviceId: number): Promise<string> {
 export function hasPermissionAsync(deviceId: number): Promise<boolean> {
   return ExpoSerialportModule.hasPermissionAsync(deviceId);
 }
+
 export function requestPermissionAsync(deviceId: number): Promise<void> {
   return ExpoSerialportModule.requestPermissionAsync(deviceId);
+}
+
+export function write(deviceId: number, hexData: string): Promise<any> {
+  return ExpoSerialportModule.write(deviceId, hexData);
 }
 
 export default {
@@ -32,4 +37,5 @@ export default {
   hasPermissionAsync,
   getSerialNumberAsync,
   requestPermissionAsync,
+  write
 };

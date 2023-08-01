@@ -37,6 +37,57 @@ class ExpoSerialportModule : Module() {
     Function("listDevices") {
       return@Function listDevices()
     }
+    
+    // --- START OF NEW CODE --- 
+    AsyncFunction("write") { deviceId: Int, hexData: String, promise: Promise ->
+      val usbDevice: UsbDevice? = findDevice(deviceId)
+    
+      if (usbDevice == null) {
+        val error: CodedException = CodedException(DEVICE_NOT_FOUND)
+        promise.reject(error)
+      } else {
+        val usbManager: UsbManager = getUsbManager()
+        val hasPermission: Boolean = usbManager.hasPermission(usbDevice)
+    
+        if (!hasPermission) {
+            val error: CodedException = CodedException(PERMISSION_REQUIRED)
+            promise.reject(error)
+        } else {
+            try {
+                val connection: UsbDeviceConnection? = usbManager.openDevice(usbDevice)
+                val interface: UsbInterface? = usbDevice.getInterface(0)
+                val endpoint = interface?.getEndpoint(1) // endpoint 1 usually used for writing
+    
+                connection?.claimInterface(interface, true)
+    
+                val bytes = hexStringToByteArray(hexData) // Convert hex string to byte array
+                val result = connection?.bulkTransfer(endpoint, bytes, bytes.size, 1000) // send data to device
+    
+                connection?.releaseInterface(interface)
+                connection?.close()
+    
+                promise.resolve(result)
+            } catch (e: Exception) {
+                promise.reject(e)
+            }
+        }
+      }
+    }
+    
+    // Function to convert hex string to byte array
+    private fun hexStringToByteArray(hexString: String): ByteArray {
+        val len = hexString.length
+        val data = ByteArray(len / 2)
+        var i = 0
+        while (i < len) {
+            data[i / 2] = ((Character.digit(hexString[i], 16) shl 4)
+                    + Character.digit(hexString[i + 1], 16)).toByte()
+            i += 2
+        }
+        return data
+    }
+    
+    // --- END OF NEW CODE ---
 
     AsyncFunction("getSerialNumberAsync") { deviceId: Int, promise: Promise ->
       val usbManager: UsbManager = getUsbManager()
