@@ -31,6 +31,20 @@ import expo.modules.kotlin.modules.ModuleDefinition
 fun ByteArray.toHexString() = joinToString("") { "%02x".format(it) }
 
 class ExpoSerialportModule : Module() {
+    
+  // Function to convert hex string to byte array
+  private fun hexStringToByteArray(hexString: String): ByteArray {
+      val len = hexString.length
+      val data = ByteArray(len / 2)
+      var i = 0
+      while (i < len) {
+          data[i / 2] = ((Character.digit(hexString[i], 16) shl 4)
+                  + Character.digit(hexString[i + 1], 16)).toByte()
+          i += 2
+      }
+      return data
+  }
+
   override fun definition() = ModuleDefinition {
     Name("ExpoSerialport")
 
@@ -68,23 +82,11 @@ class ExpoSerialportModule : Module() {
     
                 promise.resolve(result)
             } catch (e: Exception) {
-                promise.reject(e)
+                val error: CodedException = CodedException(e.message ?: "Unknown Error")
+                promise.reject(error)
             }
         }
       }
-    }
-    
-    // Function to convert hex string to byte array
-    private fun hexStringToByteArray(hexString: String): ByteArray {
-        val len = hexString.length
-        val data = ByteArray(len / 2)
-        var i = 0
-        while (i < len) {
-            data[i / 2] = ((Character.digit(hexString[i], 16) shl 4)
-                    + Character.digit(hexString[i + 1], 16)).toByte()
-            i += 2
-        }
-        return data
     }
     
     // --- END OF NEW CODE ---
@@ -135,6 +137,7 @@ class ExpoSerialportModule : Module() {
   private val DEVICE_NOT_FOUND: String = "device_not_found"
   private val PERMISSION_DENIED: String = "permission_denied"
   private val PERMISSION_REQUIRED: String = "permission_required"
+  // private val PERMISSION_REQUIRED: String = "permission_required"
 
   private val context
   get() = requireNotNull(appContext.reactContext)
