@@ -54,35 +54,49 @@ class ExpoSerialportModule : Module() {
     
     // --- START OF NEW CODE --- 
     AsyncFunction("write") { deviceId: Int, hexData: String, promise: Promise ->
+      println("Debug: write function started")
       val usbDevice: UsbDevice? = findDevice(deviceId)
     
       if (usbDevice == null) {
+        println("Debug: usbDevice not found")
         val error: CodedException = CodedException(DEVICE_NOT_FOUND)
         promise.reject(error)
       } else {
+        println("Debug: usbDevice found")
         val usbManager: UsbManager = getUsbManager()
         val hasPermission: Boolean = usbManager.hasPermission(usbDevice)
     
         if (!hasPermission) {
+            println("Debug: No permission")
             val error: CodedException = CodedException(PERMISSION_REQUIRED)
             promise.reject(error)
         } else {
+            println("Debug: Permission granted")
             try {
                 val connection: UsbDeviceConnection? = usbManager.openDevice(usbDevice)
+                println("Debug: Connection opened")
                 val usbInterface: UsbInterface? = usbDevice.getInterface(0)
+                println("Debug: Interface acquired")
                 val endpoint = usbInterface?.getEndpoint(1) // endpoint 1 usually used for writing
     
                 connection?.claimInterface(usbInterface, true)
+                println("Debug: Interface claimed")
     
                 val bytes = hexStringToByteArray(hexData) // Convert hex string to byte array
+                println("Debug: Data converted to bytes")
                 val result = connection?.bulkTransfer(endpoint, bytes, bytes.size, 1000) // send data to device
-    
+                println("Debug: Bulk transfer executed")
+
                 connection?.releaseInterface(usbInterface)
+                println("Debug: Interface released")
                 connection?.close()
-    
+                println("Debug: Connection closed")
+
+                println("Debug: About to resolve promise with result: $result")
                 promise.resolve(result)
             } catch (e: Exception) {
-                val error: CodedException = CodedException(e.message ?: "Unknown Error")
+                println("Debug: Exception occurred: ${e.message}") 
+                val error: CodedException = CodedException("unknown_error")
                 promise.reject(error)
             }
         }
