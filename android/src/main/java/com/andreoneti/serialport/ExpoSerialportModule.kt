@@ -69,15 +69,15 @@ class ExpoSerialportModule : Module() {
         } else {
             try {
                 val connection: UsbDeviceConnection? = usbManager.openDevice(usbDevice)
-                val interface: UsbInterface? = usbDevice.getInterface(0)
-                val endpoint = interface?.getEndpoint(1) // endpoint 1 usually used for writing
+                val usbInterface: UsbInterface? = usbDevice.getInterface(0)
+                val endpoint = usbInterface?.getEndpoint(1) // endpoint 1 usually used for writing
     
-                connection?.claimInterface(interface, true)
+                connection?.claimInterface(usbInterface, true)
     
                 val bytes = hexStringToByteArray(hexData) // Convert hex string to byte array
                 val result = connection?.bulkTransfer(endpoint, bytes, bytes.size, 1000) // send data to device
     
-                connection?.releaseInterface(interface)
+                connection?.releaseInterface(usbInterface)
                 connection?.close()
     
                 promise.resolve(result)
