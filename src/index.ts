@@ -33,6 +33,7 @@ export function requestPermissionAsync(deviceId: number): Promise<void> {
 // }
 
 export function write(deviceId: number): Promise<any> {
+  console.log("Entro a funcion write");
   return ExpoSerialportModule.write(deviceId);
 }
 

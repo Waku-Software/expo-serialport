@@ -15,6 +15,7 @@ export function requestPermissionAsync(deviceId) {
 //   return ExpoSerialportModule.write(deviceId, hexData);
 // }
 export function write(deviceId) {
+    console.log("Entro a funcion write");
     return ExpoSerialportModule.write(deviceId);
 }
 export default {
