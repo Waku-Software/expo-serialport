@@ -17,6 +17,7 @@ export function listDevices(): UsbDevice[] {
 }
 
 export function listDevicesAgain(): UsbDevice[] {
+  console.log("Entro a funcion listDevicesAgain");
   return ExpoSerialportModule.listDevicesAgain();
 }
 
