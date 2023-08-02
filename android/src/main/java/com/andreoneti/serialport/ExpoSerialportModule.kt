@@ -51,6 +51,10 @@ class ExpoSerialportModule : Module() {
     Function("listDevices") {
       return@Function listDevices()
     }
+
+    Function("listDevicesAgain") {
+      return@Function listDevicesAgain()
+    }
     
     // --- START OF NEW CODE --- 
     AsyncFunction("write") { deviceId: Int, promise: Promise ->
@@ -223,6 +227,34 @@ class ExpoSerialportModule : Module() {
 
   private fun getUsbManager(): UsbManager {
     return context.getSystemService(Context.USB_SERVICE) as UsbManager
+  }
+
+  private fun listDevicesAgain(): WritableArray {
+    println("Debug: Entro a list devices Again")
+    val usbManager: UsbManager = getUsbManager()
+    val usbDeviceList: List<UsbDevice>? = usbManager.deviceList.values.toList()
+
+    val usbDevicesArray: WritableArray = WritableNativeArray()
+
+    if (usbDeviceList != null) {
+      for (usbDevice in usbDeviceList) {
+        val usbDeviceMap: WritableMap = WritableNativeMap()
+
+        usbDeviceMap.putInt("deviceId", usbDevice.getDeviceId())
+        usbDeviceMap.putInt("vendorId", usbDevice.getVendorId())
+        usbDeviceMap.putInt("productId", usbDevice.getProductId())
+        usbDeviceMap.putInt("deviceClass", usbDevice.getDeviceClass())
+        usbDeviceMap.putString("deviceName", usbDevice.getDeviceName())
+        usbDeviceMap.putString("productName", usbDevice.getProductName())
+        usbDeviceMap.putInt("deviceProtocol", usbDevice.getDeviceProtocol())
+        usbDeviceMap.putInt("interfaceCount", usbDevice.getInterfaceCount())
+        usbDeviceMap.putString("manufacturerName", usbDevice.getManufacturerName())
+
+        usbDevicesArray.pushMap(usbDeviceMap)
+      }
+    }
+
+    return usbDevicesArray
   }
 
   private fun listDevices(): WritableArray {

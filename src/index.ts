@@ -16,6 +16,10 @@ export function listDevices(): UsbDevice[] {
   return ExpoSerialportModule.listDevices();
 }
 
+export function listDevicesAgain(): UsbDevice[] {
+  return ExpoSerialportModule.listDevicesAgain();
+}
+
 export function getSerialNumberAsync(deviceId: number): Promise<string> {
   return ExpoSerialportModule.getSerialNumberAsync(deviceId);
 }
@@ -39,6 +43,7 @@ export function write(deviceId: number): Promise<any> {
 
 export default {
   listDevices,
+  listDevicesAgain,
   hasPermissionAsync,
   getSerialNumberAsync,
   requestPermissionAsync,
