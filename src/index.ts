@@ -1,4 +1,5 @@
 import ExpoSerialportModule from "./ExpoSerialportModule";
+import UsbportModule from "./UsbportModule";
 
 export interface UsbDevice {
   vendorId: number;
@@ -33,6 +34,10 @@ export function requestPermissionAsync(deviceId: number): Promise<void> {
   return ExpoSerialportModule.requestPermissionAsync(deviceId);
 }
 
+export function testLog() {
+  return UsbportModule.testLog();
+}
+
 // export function write(deviceId: number, hexData: string): Promise<any> {
 //   return ExpoSerialportModule.write(deviceId, hexData);
 // }
@@ -48,5 +53,6 @@ export default {
   hasPermissionAsync,
   getSerialNumberAsync,
   requestPermissionAsync,
-  write
+  write,
+  testLog
 };
