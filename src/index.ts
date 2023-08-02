@@ -28,8 +28,12 @@ export function requestPermissionAsync(deviceId: number): Promise<void> {
   return ExpoSerialportModule.requestPermissionAsync(deviceId);
 }
 
-export function write(deviceId: number, hexData: string): Promise<any> {
-  return ExpoSerialportModule.write(deviceId, hexData);
+// export function write(deviceId: number, hexData: string): Promise<any> {
+//   return ExpoSerialportModule.write(deviceId, hexData);
+// }
+
+export function write(deviceId: number): Promise<any> {
+  return ExpoSerialportModule.write(deviceId);
 }
 
 export default {
